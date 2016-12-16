@@ -9,9 +9,15 @@ import com.crawl.connexion.Connexion;
 import com.crawl.main.TreatPage;
 
 public class DoAction {
+   private String url;
 
-   public static void main(String[] args) throws ClientProtocolException, IOException {
-      Document document = new Connexion().getPage("http://www.miniinthebox.com/fr/accessorios-pour-iphone_c4861");
+   public DoAction(String url) {
+      super();
+      this.url = url;
+   }
+
+   public void startCrawl() throws ClientProtocolException, IOException, InterruptedException {
+      Document document = new Connexion().getPage(url);
       new TreatPage(document);
    }
 

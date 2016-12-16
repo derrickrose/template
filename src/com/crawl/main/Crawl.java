@@ -28,10 +28,9 @@ public class Crawl {
          em.persist(product);
          tx.commit();
       } catch (Exception e) {
-         if (tx != null) {
+         if (tx != null && tx.isActive()) {
             tx.rollback();
          }
-         System.out.println("EXCEPTION -- > " + e.getMessage());
       } finally {
 
          if (em != null) {

@@ -33,13 +33,15 @@ public class OfferPage {
       p.setShippingDelay(4);
       p.setShippingCost(0);
       p.setBrand("");
+      String strCategory = getBreadcrumb(document);
+      System.out.println("Category :" + strCategory);
       p.setCategory("");
       p.setColor_name("");
       p.setSize_name("");
       p.setMotclef("");
       String strDescription = getDescription(document);
       System.out.println("Description :" + strDescription);
-      p.setDescription("");
+      p.setDescription(strDescription);
       p.setQuantity(0);
       p.setParent_id("");
       String productId = getProductId(document);
@@ -83,9 +85,15 @@ public class OfferPage {
       return title;
    }
 
+   private String getBreadcrumb(final Element element) {
+      final Element titleElement = findElement(element, "ul.breadcrumb-new>li");
+      String title = fromElementText(titleElement);
+      return title;
+   }
+
    private String getDescription(final Element element) {
       final Element titleElement = findElement(element, "meta[name=description]");
-      String title = fromElementText(titleElement);
+      String title = fromAttribute(titleElement, "content");
       return title;
    }
 

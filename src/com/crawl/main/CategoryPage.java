@@ -17,7 +17,7 @@ public class CategoryPage {
 
    public ArrayList<String> getAllListing() {
       ArrayList<String> urls = new ArrayList<String>();
-      Elements lists = document.select("div.category-item>a");
+      Elements lists = document.select("div.container-flash-banner+div a");
       for (Element url : lists) {
          urls.add(url.attr("href"));
       }

@@ -26,7 +26,7 @@ public class TreatPage {
       this.urlListing = urlListing;
    }
 
-   public TreatPage(Document document) throws ClientProtocolException, IOException {
+   public TreatPage(Document document) throws ClientProtocolException, IOException, InterruptedException {
       super();
       this.document = document;
       Connexion connect = new Connexion();
@@ -45,6 +45,8 @@ public class TreatPage {
                   Document offerPageDocument = connect.getPage(offerLink);
                   new OfferPage(offerPageDocument).getInformation();
                }
+               indexPage++;
+               Thread.sleep(5000);
                continueCrawl = hasNextPage(docListing);
                url = getNextPageUrl(docListing);
             }
