@@ -34,9 +34,9 @@ public class OfferPage {
       p.setShippingDelay(4);
       p.setShippingCost(0);
       p.setBrand("");
-      String strCategory = getBreadcrumb(document);
+      String strCategory = getCategory(document);
       System.out.println("Category :" + strCategory);
-      p.setCategory("");
+      p.setCategory(strCategory);
       p.setColor_name("");
       p.setSize_name("");
       p.setMotclef("");
@@ -106,6 +106,22 @@ public class OfferPage {
 
          }
       }
+   }
+
+   private String getCategory(Document doc) {
+      String strCategory = "";
+
+      Elements breadcrumb = doc.select("ul.breadcrumb-new>li:not([class=home])");
+      for (Element bc : breadcrumb) {
+         Element parent = findElement(bc, "dl>dt>a");
+         if (parent != null) {
+            strCategory += fromElementText(parent) + ">";
+         } else {
+            strCategory += fromElementText(bc);
+         }
+      }
+
+      return strCategory;
    }
 
    private Product cloneProduct(Product product) {

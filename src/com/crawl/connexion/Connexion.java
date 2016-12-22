@@ -23,20 +23,25 @@ import org.jsoup.nodes.Document;
 public class Connexion {
 
    public Document getPage(String url) throws ClientProtocolException, IOException {
-      DefaultHttpClient httpclient = new DefaultHttpClient();
-      HttpGet httpGet = new HttpGet(url);
-      httpGet.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-      httpGet.setHeader("Host", "www.miniinthebox.com");
-      httpGet.setHeader("Referer", "http://www.miniinthebox.com/fr/");
-      httpGet.setHeader("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0");
-      httpGet.setHeader("Accept-Encoding", "gzip, deflate");
-      HttpContext context = context(httpclient);
-      HttpResponse response = httpclient.execute(httpGet, context);
-      HttpEntity entity = response.getEntity();
-      int status = response.getStatusLine().getStatusCode();
-      System.out.println("Connection status : " + status);
-      if (status == 200) {
-         return Jsoup.parse(getContent(response, entity));
+      int status = 0;
+      int tryconn = 0;
+      while (tryconn < 4 && status != 200) {
+         DefaultHttpClient httpclient = new DefaultHttpClient();
+         HttpGet httpGet = new HttpGet(url);
+         httpGet.setHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+         httpGet.setHeader("Host", "www.miniinthebox.com");
+         httpGet.setHeader("Referer", "http://www.miniinthebox.com/fr/");
+         httpGet.setHeader("User-Agent", "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:44.0) Gecko/20100101 Firefox/44.0");
+         httpGet.setHeader("Accept-Encoding", "gzip, deflate");
+         HttpContext context = context(httpclient);
+         HttpResponse response = httpclient.execute(httpGet, context);
+         HttpEntity entity = response.getEntity();
+         status = response.getStatusLine().getStatusCode();
+         System.out.println("Connection status : " + status);
+         if (status == 200) {
+            return Jsoup.parse(getContent(response, entity));
+         }
+         tryconn++;
       }
 
       return null;

@@ -40,9 +40,11 @@ public class TreatPage {
             while (continueCrawl) {
                System.out.println("=========================> Page n°" + indexPage);
                Document docListing = connect.getPage(url);
+               if (docListing == null) break;
                ArrayList<String> offrelists = new ListingPage(docListing).getAllOfferUrl();
                for (String offerLink : offrelists) {
                   Document offerPageDocument = connect.getPage(offerLink);
+                  if (offerPageDocument == null) continue;
                   new OfferPage(offerPageDocument).getInformation();
                }
                indexPage++;
@@ -53,17 +55,18 @@ public class TreatPage {
 
          }
       } else if (isListingPage()) {// treat listing page
-         String url = document.baseUri();
-         System.out.println("Url listing : " + url);
+         String url = "";
          System.out.println("===========>Listing Treatment<=====================");
          boolean continueCrawl = true;
          int indexPage = 0;
          while (continueCrawl) {
             System.out.println("=========================> Page n°" + indexPage);
             Document docListing = (indexPage == 0) ? document : connect.getPage(url);
+            if (docListing == null) break;
             ArrayList<String> offrelists = new ListingPage(docListing).getAllOfferUrl();
             for (String offerLink : offrelists) {
                Document offerPageDocument = connect.getPage(offerLink);
+               if (offerPageDocument == null) continue;
                new OfferPage(offerPageDocument).getInformation();
             }
             indexPage++;
