@@ -55,15 +55,19 @@ public class OfferPage {
    }
 
    private void treatVarianteColor(Product product) {// treat color variante
-      Elements colorlist = document.select("div.attributes-value-show:has(h5:contains(Couleur))>span");
+      Elements colorlist = document.select("div#value_attr_1772554_429:has(h5:contains(Couleur))>span");
       if (colorlist.size() > 0) {
          for (Element offerVariante : colorlist) {
             Product variantProduct = cloneProduct(product);
             String colorName = fromAttribute(offerVariante, "data-color");
+            if (StringUtils.isBlank(colorName)) {
+               colorName = fromElementText(offerVariante);
+            }
             System.out.println("Variante color Name:" + colorName);
             String selecteurImage = fromAttribute(offerVariante, "image-id");// img variante:li#img_29582469>a>img
             selecteurImage = "li#img_" + selecteurImage + ">a>img";
             String strImage = document.select(selecteurImage).attr("data-normal");
+            if (StringUtils.isBlank(strImage)) strImage = product.getImage();
             System.out.println("Variante color Image:" + strImage);
             String variantId = fromAttribute(offerVariante, "data-id");
             variantId = variantId.replace("attr_", "").trim();
@@ -85,9 +89,9 @@ public class OfferPage {
    }
 
    private void treatVarianteSize(Product product) {// treat size variante
-      Elements colorlist = document.select("select#attr_4240987_39>option:not(:contains(Taille))");
-      if (colorlist.size() > 0) {
-         for (Element offerVariante : colorlist) {
+      Elements sizelist = document.select("select#attr_4240987_39>option:not(:contains(Taille))");
+      if (sizelist.size() > 0) {
+         for (Element offerVariante : sizelist) {
             Product variantProduct = cloneProduct(product);
             String size_name = fromElementText(offerVariante);
             System.out.println("Variante Size Name:" + size_name);

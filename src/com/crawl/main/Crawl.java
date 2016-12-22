@@ -17,7 +17,6 @@ public class Crawl {
 
    public void saveProduct() {
       // 1 : Ouverture unite de travail JPA
-      System.out.println("Tona ato an");
       EntityManagerFactory emf = Persistence.createEntityManagerFactory("products-crawl");
       EntityManager em = emf.createEntityManager();
 
