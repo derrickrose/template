@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import com.crawl.domain.Product;
 
@@ -47,7 +48,80 @@ public class OfferPage {
       String productId = getProductId(document);
       System.out.println("Product Id :" + productId);
       p.setProductId(productId);
+      // Treat Variante
+      treatVarianteColor(p);
+
       new Crawl(p).saveProduct();
+   }
+
+   private void treatVarianteColor(Product product) {// treat color variante
+      Elements colorlist = document.select("div.attributes-value-show:has(h5:contains(Couleur))>span");
+      if (colorlist.size() > 0) {
+         for (Element offerVariante : colorlist) {
+            Product variantProduct = cloneProduct(product);
+            String colorName = fromAttribute(offerVariante, "data-color");
+            System.out.println("Variante color Name:" + colorName);
+            String selecteurImage = fromAttribute(offerVariante, "image-id");// img variante:li#img_29582469>a>img
+            selecteurImage = "li#img_" + selecteurImage + ">a>img";
+            String strImage = document.select(selecteurImage).attr("data-normal");
+            System.out.println("Variante color Image:" + strImage);
+            String variantId = fromAttribute(offerVariante, "data-id");
+            variantId = variantId.replace("attr_", "").trim();
+            System.out.println("Variante color Id:" + variantId);
+            variantProduct.setName(product.getName() + " " + colorName);
+            variantProduct.setParent_id(product.getProductId());
+            variantProduct.setProductId(variantId);
+            variantProduct.setImage(strImage);
+            variantProduct.setColor_name(colorName);
+            // treat variante size
+            treatVarianteSize(variantProduct);
+            new Crawl(variantProduct).saveProduct();
+
+         }
+      } else {
+         // for variante color empty
+         treatVarianteSize(product);
+      }
+   }
+
+   private void treatVarianteSize(Product product) {// treat size variante
+      Elements colorlist = document.select("select#attr_4240987_39>option:not(:contains(Taille))");
+      if (colorlist.size() > 0) {
+         for (Element offerVariante : colorlist) {
+            Product variantProduct = cloneProduct(product);
+            String size_name = fromElementText(offerVariante);
+            System.out.println("Variante Size Name:" + size_name);
+            String variantId = fromAttribute(offerVariante, "value");
+            variantId = product.getProductId() + "_" + variantId;
+            System.out.println("Variante Size Id:" + variantId);
+            variantProduct.setName(product.getName() + " " + size_name);
+            variantProduct.setParent_id(product.getProductId());
+            variantProduct.setProductId(variantId);
+            variantProduct.setSize_name(size_name);
+            new Crawl(variantProduct).saveProduct();
+
+         }
+      }
+   }
+
+   private Product cloneProduct(Product product) {
+      Product prod = new Product();
+      prod.setBrand(product.getBrand());
+      prod.setCategory(product.getCategory());
+      prod.setColor_name(product.getColor_name());
+      prod.setDescription(product.getDescription());
+      prod.setImage(product.getImage());
+      prod.setLink(product.getLink());
+      prod.setMotclef(product.getMotclef());
+      prod.setName(product.getName());
+      prod.setParent_id(product.getParent_id());
+      prod.setPrice(product.getPrice());
+      prod.setProductId(product.getProductId());
+      prod.setQuantity(product.getQuantity());
+      prod.setShippingCost(product.getShippingCost());
+      prod.setShippingDelay(product.getShippingDelay());
+      prod.setSize_name(product.getSize_name());
+      return prod;
    }
 
    private float getPrice(Element element) {
@@ -98,11 +172,8 @@ public class OfferPage {
    }
 
    private String getProductId(final Element element) {
-      final Element skuElement = findElement(element, "span.item-id");
-      String productId = fromElementText(skuElement);
-      if (StringUtils.isNotBlank(productId)) {
-         productId = productId.replace("#", "");
-      }
+      final Element skuElement = findElement(element, "input[name=products_id]");
+      String productId = fromAttribute(skuElement, "value");
       return productId;
    }
 

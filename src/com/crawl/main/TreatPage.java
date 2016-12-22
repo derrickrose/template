@@ -30,7 +30,7 @@ public class TreatPage {
       super();
       this.document = document;
       Connexion connect = new Connexion();
-      if (isCategoryPage()) {
+      if (isCategoryPage()) {// treat category page
          System.out.println("===========>Category treatment<=====================");
          setUrlListing(new CategoryPage(document).getAllListing());
          for (String url : getUrlListing()) {
@@ -52,8 +52,7 @@ public class TreatPage {
             }
 
          }
-      }
-      if (isListingPage()) {
+      } else if (isListingPage()) {// treat listing page
          String url = document.baseUri();
          System.out.println("Url listing : " + url);
          System.out.println("===========>Listing Treatment<=====================");
@@ -72,6 +71,8 @@ public class TreatPage {
             continueCrawl = hasNextPage(docListing);
             url = getNextPageUrl(docListing);
          }
+      } else if (isOfferPage()) {// treat offer page
+         new OfferPage(document).getInformation();
       }
    }
 
