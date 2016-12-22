@@ -53,9 +53,25 @@ public class TreatPage {
 
          }
       }
-
       if (isListingPage()) {
-
+         String url = document.baseUri();
+         System.out.println("Url listing : " + url);
+         System.out.println("===========>Listing Treatment<=====================");
+         boolean continueCrawl = true;
+         int indexPage = 0;
+         while (continueCrawl) {
+            System.out.println("=========================> Page n°" + indexPage);
+            Document docListing = (indexPage == 0) ? document : connect.getPage(url);
+            ArrayList<String> offrelists = new ListingPage(docListing).getAllOfferUrl();
+            for (String offerLink : offrelists) {
+               Document offerPageDocument = connect.getPage(offerLink);
+               new OfferPage(offerPageDocument).getInformation();
+            }
+            indexPage++;
+            Thread.sleep(5000);
+            continueCrawl = hasNextPage(docListing);
+            url = getNextPageUrl(docListing);
+         }
       }
    }
 
