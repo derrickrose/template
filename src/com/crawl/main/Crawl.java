@@ -4,6 +4,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
 
 import com.crawl.domain.Product;
 
@@ -38,6 +39,17 @@ public class Crawl {
             emf.close();
          }
       }
+   }
+
+   public Product getProduct(String url) {
+      EntityManagerFactory emf = Persistence.createEntityManagerFactory("products-crawl");
+      EntityManager em = emf.createEntityManager();
+
+      TypedQuery<Product> query = em.createQuery("SELECT p FROM Product p WHERE p.link=:url", Product.class);
+      Product produit = query.setParameter("url", url).getSingleResult();
+      em.close();
+      emf.close();
+      return produit;
    }
    //
    // public static void main(String[] args) {

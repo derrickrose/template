@@ -1,5 +1,8 @@
 package com.crawl.main;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -55,7 +58,7 @@ public class OfferPage {
    }
 
    private void treatVarianteColor(Product product) {// treat color variante
-      Elements colorlist = document.select("div#value_attr_1772554_429:has(h5:contains(Couleur))>span");
+      Elements colorlist = document.select("div.attributes-value-show:has(h5:contains(Couleur))>span");
       if (colorlist.size() > 0) {
          for (Element offerVariante : colorlist) {
             Product variantProduct = cloneProduct(product);
@@ -188,6 +191,11 @@ public class OfferPage {
    private String getDescription(final Element element) {
       final Element titleElement = findElement(element, "meta[name=description]");
       String title = fromAttribute(titleElement, "content");
+      Pattern pPrice = Pattern.compile("(.?\\d+\\.\\d+)\\s(.*)");
+      Matcher m = pPrice.matcher(title);
+      if (m.find()) {
+         return m.group(2);
+      }
       return title;
    }
 
