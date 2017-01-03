@@ -44,6 +44,7 @@ public class TreatPage {
          System.out.println("=========> HOME PAGE <===============");
          setUrlCategory(new HomePage(document).getAllCategorys());
          for (String urls : getUrlCategory()) {
+            System.out.println("Category to crawl :" + urls);
             Document docCategory = connect.getPage(urls);
             System.out.println("===========>Category treatment<=====================");
             setUrlListing(new CategoryPage(docCategory).getAllListing());
@@ -57,17 +58,19 @@ public class TreatPage {
                   if (docListing == null) break;
                   ArrayList<String> offrelists = new ListingPage(docListing).getAllOfferUrl();
                   for (String offerLink : offrelists) {
-                     Document offerPageDocument = connect.getPage(offerLink);
-                     if (offerPageDocument == null) continue;
-                     Product p = new Crawl(null).getProduct(offerLink);
-                     if (p != null) {
+                     List<Product> p = new Crawl(null).getProduct(offerLink);
+                     if (p.size() > 0) {
                         System.out.println("========> DUPLICATE PRODUCT<==============");
                         continue;
+                     } else {
+                        System.out.println("Product is null:" + offerLink);
                      }
+                     Document offerPageDocument = connect.getPage(offerLink);
+                     if (offerPageDocument == null) continue;
                      new OfferPage(offerPageDocument).getInformation();
                   }
                   indexPage++;
-                  Thread.sleep(5000);
+                  // Thread.sleep(5000);
                   continueCrawl = hasNextPage(docListing);
                   url = getNextPageUrl(docListing);
                }
@@ -88,17 +91,19 @@ public class TreatPage {
                if (docListing == null) break;
                ArrayList<String> offrelists = new ListingPage(docListing).getAllOfferUrl();
                for (String offerLink : offrelists) {
-                  Document offerPageDocument = connect.getPage(offerLink);
-                  if (offerPageDocument == null) continue;
-                  Product p = new Crawl(null).getProduct(offerLink);
-                  if (p != null) {
+                  List<Product> p = new Crawl(null).getProduct(offerLink);
+                  if (p.size() > 0) {
                      System.out.println("========> DUPLICATE PRODUCT<==============");
                      continue;
+                  } else {
+                     System.out.println("Product is null:" + offerLink);
                   }
+                  Document offerPageDocument = connect.getPage(offerLink);
+                  if (offerPageDocument == null) continue;
                   new OfferPage(offerPageDocument).getInformation();
                }
                indexPage++;
-               Thread.sleep(5000);
+               // Thread.sleep(5000);
                continueCrawl = hasNextPage(docListing);
                url = getNextPageUrl(docListing);
             }
@@ -115,17 +120,19 @@ public class TreatPage {
             if (docListing == null) break;
             ArrayList<String> offrelists = new ListingPage(docListing).getAllOfferUrl();
             for (String offerLink : offrelists) {
-               Document offerPageDocument = connect.getPage(offerLink);
-               if (offerPageDocument == null) continue;
-               Product p = new Crawl(null).getProduct(offerLink);
-               if (p != null) {
+               List<Product> p = new Crawl(null).getProduct(offerLink);
+               if (p.size() > 0) {
                   System.out.println("========> DUPLICATE PRODUCT<==============");
                   continue;
+               } else {
+                  System.out.println("Product is null:" + offerLink);
                }
+               Document offerPageDocument = connect.getPage(offerLink);
+               if (offerPageDocument == null) continue;
                new OfferPage(offerPageDocument).getInformation();
             }
             indexPage++;
-            Thread.sleep(5000);
+            // Thread.sleep(5000);
             continueCrawl = hasNextPage(docListing);
             url = getNextPageUrl(docListing);
          }

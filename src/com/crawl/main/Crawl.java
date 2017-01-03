@@ -1,10 +1,14 @@
 package com.crawl.main;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
-import javax.persistence.TypedQuery;
+import javax.persistence.Query;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.crawl.domain.Product;
 
@@ -41,45 +45,22 @@ public class Crawl {
       }
    }
 
-   public Product getProduct(String url) {
+   public List<Product> getProduct(String url) {
+      // 1 : Ouverture unite de travail JPA
+      String urltemp = (StringUtils.contains(url, "?")) ? StringUtils.substringBeforeLast(url, "?") : url;
       EntityManagerFactory emf = Persistence.createEntityManagerFactory("products-crawl");
       EntityManager em = emf.createEntityManager();
-
-      TypedQuery<Product> query = em.createQuery("SELECT p FROM Product p WHERE p.link=:url", Product.class);
-      Product produit = query.setParameter("url", url).getSingleResult();
+      Query query = em.createQuery("SELECT produit From Product produit  WHERE produit.link=:url");
+      List<Product> products = query.setParameter("url", urltemp).getResultList();
       em.close();
       emf.close();
-      return produit;
+      return products;
    }
-   //
-   // public static void main(String[] args) {
-   //
-   // // 1 : Ouverture unite de travail JPA
-   // EntityManagerFactory emf = Persistence.createEntityManagerFactory("products-crawl");
-   // EntityManager em = emf.createEntityManager();
-   //
-   // // 2 : Ouverture transaction
-   // EntityTransaction tx = em.getTransaction();
-   // // 3 : Instanciation Objet metier
-   // Product product = new Product("productId", "parent_id", "name", "link", "image", "description", "motclef", 10.4f, 2.5f, 2, "brand", "category", 0, "color_name",
-   // "size_name");
-   // try {
-   // tx.begin();
-   // em.persist(product);
-   // tx.commit();
-   // } catch (Exception e) {
-   // if (tx != null) {
-   // tx.rollback();
-   // }
-   // System.out.println("EXCEPTION -- > " + e.getMessage());
-   // e.printStackTrace();
-   // } finally {
-   //
-   // if (em != null) {
-   // em.close();
-   // emf.close();
-   // }
-   // }
-   // }
+
+   /*
+    * public static void main(String[] arg0) { List<Product> lists = new
+    * Crawl(null).getProduct("http://www.miniinthebox.com/fr/v1-4-hdmi-displayport-m-m-noir-plaque-or-1-8-m_p1000014.html"); for (Product p : lists) {
+    * System.out.println("OK :" + p.getName()); } }
+    */
 
 }
